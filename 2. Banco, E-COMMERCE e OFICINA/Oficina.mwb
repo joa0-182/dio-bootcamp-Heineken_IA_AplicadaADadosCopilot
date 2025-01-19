@@ -1,0 +1,70 @@
+CREATE DATABASE Oficina;
+
+USE Oficina;
+
+CREATE TABLE Clientes (
+    ClienteID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    CPF VARCHAR(11) UNIQUE NOT NULL,
+    Telefone VARCHAR(15),
+    Endereco VARCHAR(255),
+    Email VARCHAR(100)
+);
+
+CREATE TABLE Veiculos (
+    VeiculoID INT AUTO_INCREMENT PRIMARY KEY,
+    ClienteID INT,
+    Marca VARCHAR(50),
+    Modelo VARCHAR(50),
+    Ano INT,
+    Placa VARCHAR(10) UNIQUE,
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID)
+);
+
+CREATE TABLE Servicos (
+    ServicoID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Descricao TEXT,
+    Preco DECIMAL(10, 2)
+);
+
+CREATE TABLE OrdensServico (
+    OrdemID INT AUTO_INCREMENT PRIMARY KEY,
+    ClienteID INT,
+    VeiculoID INT,
+    DataEntrada DATE,
+    DataSaida DATE,
+    Status VARCHAR(50),
+    Total DECIMAL(10, 2),
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID),
+    FOREIGN KEY (VeiculoID) REFERENCES Veiculos(VeiculoID)
+);
+
+CREATE TABLE DetalhesOrdensServico (
+    DetalheID INT AUTO_INCREMENT PRIMARY KEY,
+    OrdemID INT,
+    ServicoID INT,
+    Quantidade INT,
+    Preco DECIMAL(10, 2),
+    FOREIGN KEY (OrdemID) REFERENCES OrdensServico(OrdemID),
+    FOREIGN KEY (ServicoID) REFERENCES Servicos(ServicoID)
+);
+
+CREATE TABLE Funcionarios (
+    FuncionarioID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    CPF VARCHAR(11) UNIQUE NOT NULL,
+    Telefone VARCHAR(15),
+    Cargo VARCHAR(50),
+    Salario DECIMAL(10, 2)
+);
+
+CREATE TABLE Atendimentos (
+    AtendimentoID INT AUTO_INCREMENT PRIMARY KEY,
+    OrdemID INT,
+    FuncionarioID INT,
+    Data DATE,
+    Observacoes TEXT,
+    FOREIGN KEY (OrdemID) REFERENCES OrdensServico(OrdemID),
+    FOREIGN KEY (FuncionarioID) REFERENCES Funcionarios(FuncionarioID)
+);

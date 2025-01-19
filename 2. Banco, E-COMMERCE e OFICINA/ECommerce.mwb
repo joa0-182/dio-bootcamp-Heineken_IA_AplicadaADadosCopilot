@@ -1,0 +1,76 @@
+CREATE DATABASE Ecommerce;
+
+USE Ecommerce;
+
+-- Tabela de Usuários
+CREATE TABLE Usuarios (
+    UsuarioID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Senha VARCHAR(255) NOT NULL,
+    Telefone VARCHAR(15),
+    Endereco VARCHAR(255),
+    TipoUsuario ENUM('Cliente', 'Admin') DEFAULT 'Cliente',
+    DataCriacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de Produtos
+CREATE TABLE Produtos (
+    ProdutoID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Descricao TEXT,
+    Preco DECIMAL(10, 2) NOT NULL,
+    Estoque INT NOT NULL,
+    CategoriaID INT,
+    DataCriacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (CategoriaID) REFERENCES Categorias(CategoriaID)
+);
+
+-- Tabela de Categorias
+CREATE TABLE Categorias (
+    CategoriaID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(50) NOT NULL,
+    Descricao TEXT
+);
+
+-- Tabela de Pedidos
+CREATE TABLE Pedidos (
+    PedidoID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioID INT,
+    DataPedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Total DECIMAL(10, 2) NOT NULL,
+    Status ENUM('Pendente', 'Processando', 'Enviado', 'Concluído', 'Cancelado') DEFAULT 'Pendente',
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)
+);
+
+-- Tabela de Detalhes do Pedido
+CREATE TABLE DetalhesPedido (
+    DetalheID INT AUTO_INCREMENT PRIMARY KEY,
+    PedidoID INT,
+    ProdutoID INT,
+    Quantidade INT NOT NULL,
+    Preco DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (PedidoID) REFERENCES Pedidos(PedidoID),
+    FOREIGN KEY (ProdutoID) REFERENCES Produtos(ProdutoID)
+);
+
+-- Tabela de Carrinho de Compras
+CREATE TABLE Carrinho (
+    CarrinhoID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioID INT,
+    ProdutoID INT,
+    Quantidade INT NOT NULL,
+    DataAdicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID),
+    FOREIGN KEY (ProdutoID) REFERENCES Produtos(ProdutoID)
+);
+
+-- Tabela de Pagamentos
+CREATE TABLE Pagamentos (
+    PagamentoID INT AUTO_INCREMENT PRIMARY KEY,
+    PedidoID INT,
+    MetodoPagamento VARCHAR(50) NOT NULL,
+    DataPagamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Valor DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (PedidoID) REFERENCES Pedidos(PedidoID)
+);
